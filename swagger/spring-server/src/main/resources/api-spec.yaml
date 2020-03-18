@@ -37,8 +37,121 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Fruit'
+
+  /fruits/{id}:
+    get:
+      description: get the list of all fruits
+      operationId: getFruitById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: success
+          schema:
+              $ref: '#/definitions/Fruit'
+    delete:
+      description: delete a fruit
+      operationId: deleteFruit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '201':
+          description: deleted
+    patch:
+      description: update a fruit
+      operationId: updatefruit
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: fruit
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Fruit'
+      responses:
+        '201':
+          description: updated
+          schema:
+            type: object
+  /fruits/byAlphabeticalOrder:
+    get:
+      description: get fruits sorted by alphabetical order
+      operationId: getFruitByAlphabeticalOrder
+      responses:
+        '201':
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Fruit'
+  /vegetables:
+    get:
+      description: get the list of all vegetables
+      operationId: getVegetables
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Vegetable'
+    post:
+      description: create a vegetable
+      operationId: createVegetable
+      consumes:
+        - application/json
+      parameters:
+        - name: vegetable
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Vegetable'
+      responses:
+        '201':
+          description: created
+          schema:
+            type: object
+  /vegetables/{id}:
+    delete:
+      description: delete a vegetable
+      operationId: deleteVegetable
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '201':
+          description: deleted
 definitions:
   Fruit:
+    type: object
+    properties:
+      kind:
+        type: string
+      colour:
+        type: string
+      size:
+        type: string
+      weight:
+        type: string
+  Vegetable:
     type: object
     properties:
       kind:

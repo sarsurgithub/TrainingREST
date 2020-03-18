@@ -1,20 +1,23 @@
 package io.avalia.fruits.api.endpoints;
 
+import io.avalia.fruits.api.ApiUtil;
 import io.avalia.fruits.api.FruitsApi;
 import io.avalia.fruits.entities.FruitEntity;
 import io.avalia.fruits.api.model.Fruit;
 import io.avalia.fruits.repositories.FruitRepository;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-07-26T19:36:34.802Z")
 
@@ -27,7 +30,6 @@ public class FruitsApiController implements FruitsApi {
     public ResponseEntity<Object> createFruit(@ApiParam(value = "", required = true) @Valid @RequestBody Fruit fruit) {
         FruitEntity newFruitEntity = toFruitEntity(fruit);
         fruitRepository.save(newFruitEntity);
-        Long id = newFruitEntity.getId();
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -39,20 +41,58 @@ public class FruitsApiController implements FruitsApi {
 
     public ResponseEntity<List<Fruit>> getFruits() {
         List<Fruit> fruits = new ArrayList<>();
+
         for (FruitEntity fruitEntity : fruitRepository.findAll()) {
             fruits.add(toFruit(fruitEntity));
         }
-        /*
-        Fruit staticFruit = new Fruit();
-        staticFruit.setColour("red");
-        staticFruit.setKind("banana");
-        staticFruit.setSize("medium");
-        List<Fruit> fruits = new ArrayList<>();
-        fruits.add(staticFruit);
-        */
+
         return ResponseEntity.ok(fruits);
     }
+    public ResponseEntity<Void> deleteFruit(@ApiParam(value = "",required=true) @PathVariable("id") Long id) {
 
+        fruitRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<List<Fruit>> getFruitByAlphabeticalOrder() {
+        List<Fruit> fruits = new ArrayList<>();
+
+        for (FruitEntity fruitEntity : fruitRepository.findAllByOrderByKind()) {
+            fruits.add(toFruit(fruitEntity));
+        }
+
+        return ResponseEntity.ok(fruits);
+
+    }
+
+    public ResponseEntity<Fruit> getFruitById(@ApiParam(value = "",required=true) @PathVariable("id") Long id) {
+        FruitEntity myFruit = fruitRepository.findById(id).get();
+        Fruit myFruitAsAFruit = toFruit(myFruit);
+        return ResponseEntity.ok(myFruitAsAFruit);
+    }
+
+    public ResponseEntity<Object> updatefruit(@ApiParam(value = "",required=true) @PathVariable("id") Long id,
+                                              @ApiParam(value = "" ,required=true )  @Valid @RequestBody Fruit fruit) {
+
+        //get the fruit to update
+        Optional<FruitEntity> fruitToUpdate = fruitRepository.findById(id);
+
+        // create an Entity with the Fruit in the params
+        FruitEntity fruitEntity = toFruitEntity(fruit);
+
+        // set the fruit to update with the values of the fruit passed as an argument
+        FruitEntity fruitToUpdateAsAnEntity = fruitToUpdate.get();
+        fruitToUpdateAsAnEntity.setColour(fruitEntity.getColour());
+        fruitToUpdateAsAnEntity.setKind(fruitEntity.getKind());
+        fruitToUpdateAsAnEntity.setSize(fruitEntity.getSize());
+
+        //save the updated fruit
+        fruitRepository.save(fruitToUpdateAsAnEntity);
+
+        //return the message
+        return ResponseEntity.ok(fruitToUpdateAsAnEntity);
+        
+    }
 
     private FruitEntity toFruitEntity(Fruit fruit) {
         FruitEntity entity = new FruitEntity();
