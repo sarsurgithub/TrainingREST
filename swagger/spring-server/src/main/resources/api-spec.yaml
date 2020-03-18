@@ -48,6 +48,8 @@ paths:
           required: true
           type: integer
           format: int64
+      produces:
+        - application/json
       responses:
         '200':
           description: success
@@ -90,6 +92,8 @@ paths:
     get:
       description: get fruits sorted by alphabetical order
       operationId: getFruitByAlphabeticalOrder
+      produces:
+        - application/json
       responses:
         '201':
           description: success
@@ -137,8 +141,8 @@ paths:
           type: integer
           format: int64
       responses:
-        '201':
-          description: deleted
+          '201':
+            description: deleted
 definitions:
   Fruit:
     type: object

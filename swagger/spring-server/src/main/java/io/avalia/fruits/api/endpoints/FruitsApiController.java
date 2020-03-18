@@ -77,21 +77,24 @@ public class FruitsApiController implements FruitsApi {
         //get the fruit to update
         Optional<FruitEntity> fruitToUpdate = fruitRepository.findById(id);
 
-        // create an Entity with the Fruit in the params
-        FruitEntity fruitEntity = toFruitEntity(fruit);
+        //create an entity from the optional
+        FruitEntity fruitToUpdateAsAnEntity = fruitToUpdate.get();
 
         // set the fruit to update with the values of the fruit passed as an argument
-        FruitEntity fruitToUpdateAsAnEntity = fruitToUpdate.get();
-        fruitToUpdateAsAnEntity.setColour(fruitEntity.getColour());
-        fruitToUpdateAsAnEntity.setKind(fruitEntity.getKind());
-        fruitToUpdateAsAnEntity.setSize(fruitEntity.getSize());
+        fruitToUpdateAsAnEntity.setColour(fruit.getColour());
+        fruitToUpdateAsAnEntity.setKind(fruit.getKind());
+        fruitToUpdateAsAnEntity.setSize(fruit.getSize());
+
+        //return the updated fruit's location
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().build().toUri();
 
         //save the updated fruit
         fruitRepository.save(fruitToUpdateAsAnEntity);
 
         //return the message
-        return ResponseEntity.ok(fruitToUpdateAsAnEntity);
-        
+        return ResponseEntity.created(location).build();
+
     }
 
     private FruitEntity toFruitEntity(Fruit fruit) {

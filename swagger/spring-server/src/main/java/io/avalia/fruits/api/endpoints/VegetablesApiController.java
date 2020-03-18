@@ -39,7 +39,7 @@ public class VegetablesApiController implements VegetablesApi {
     }
 
 
-    public ResponseEntity<List<Vegetable>> getVegetable() {
+    public ResponseEntity<List<Vegetable>> getVegetables() {
         List<Vegetable> vegetables = new ArrayList<>();
 
         for (VegetableEntity vegetableEntity : vegetableRepository.findAll()) {
